@@ -26,3 +26,24 @@ INSERT INTO veiculos (placa, marca, modelo, ano_fabricacao, cor, nome_proprietar
 ('YZA-3456', 'Renault', 'Kwid', 2022, 'Laranja', 'Guilherme Pereira'),
 ('BCD-7I88', 'Nissan', 'Kicks', 2024, 'Preto', 'Laura Fernandes Rocha'),
 ('RIO-2A18', 'Chevrolet', 'Onix', 2024, 'Preto', 'Irineu Martins');
+
+-- Remove a tabela de ordens de serviço se ela já existir.
+DROP TABLE IF EXISTS ordens_servico;
+
+-- Cria a tabela para Ordens de Serviço.
+CREATE TABLE ordens_servico (
+    id SERIAL PRIMARY KEY,
+    descricao_servico TEXT NOT NULL,
+    custo DECIMAL(10, 2) NOT NULL,
+    data_servico DATE NOT NULL,
+    veiculo_placa VARCHAR(10) NOT NULL,
+    CONSTRAINT fk_veiculo
+        FOREIGN KEY(veiculo_placa) 
+        REFERENCES veiculos(placa)
+);
+
+-- Insere algumas ordens de serviço de exemplo.
+INSERT INTO ordens_servico (descricao_servico, custo, data_servico, veiculo_placa) VALUES
+('Troca de óleo e filtro do motor', 350.50, '2024-09-25', 'BRA-2E19'),
+('Alinhamento e balanceamento', 180.00, '2024-09-20', 'RGE-5A22'),
+('Troca das pastilhas de freio', 450.75, '2024-08-15', 'BRA-2E19');

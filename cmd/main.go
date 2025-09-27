@@ -22,17 +22,29 @@ func main() {
 	veiculoUseCase := usecase.NewVeiculoUseCase(veiculoRepository)
 	veiculoController := controller.NewVeiculoController(veiculoUseCase)
 
+	// Injeção de dependência para Ordens de Serviço
+	ordemServicoRepository := repository.NewOrdemServicoRepository(dbConnection)
+	ordemServicoUseCase := usecase.NewOrdemServicoUseCase(ordemServicoRepository)
+	ordemServicoController := controller.NewOrdemServicoController(ordemServicoUseCase)
+
 	server.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"message:": "pong",
 		})
 	})
 
+	// Rotas de Veículos
 	server.GET("/veiculos", veiculoController.GetVeiculos)
 	server.GET("/veiculo/:veiculoId", veiculoController.GetVeiculoById)
 	server.POST("/veiculo", veiculoController.CreateVeiculo)
 	server.PUT("/veiculo/:veiculoId", veiculoController.UpdateVeiculo)
 	server.DELETE("/veiculo/:veiculoId", veiculoController.DeleteVeiculo)
+
+	// Rotas de Ordens de Serviço
+	server.POST("/servicos", ordemServicoController.CreateOrdemServico)
+	server.GET("/servicos/:veiculoPlaca", ordemServicoController.GetOrdensServicoByPlaca)
+	server.PUT("/servicos/:servicoId", ordemServicoController.UpdateOrdemServico)
+	server.DELETE("/servicos/:servicoId", ordemServicoController.DeleteOrdemServico)
 
 	server.Run(":8000")
 }
