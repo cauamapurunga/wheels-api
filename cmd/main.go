@@ -18,6 +18,7 @@ func main() {
 		log.Fatalf("could not connect to db: %v", err)
 	}
 
+	// Injeção de dependência para Veículos
 	veiculoRepository := repository.NewVeiculoRepository(dbConnection)
 	veiculoUseCase := usecase.NewVeiculoUseCase(veiculoRepository)
 	veiculoController := controller.NewVeiculoController(veiculoUseCase)
@@ -30,6 +31,7 @@ func main() {
 	server.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"message:": "pong",
+			"message":  "pong",
 		})
 	})
 

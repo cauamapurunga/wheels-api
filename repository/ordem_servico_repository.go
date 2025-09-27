@@ -20,7 +20,7 @@ func (r *OrdemServicoRepository) CreateOrdemServico(ordem model.OrdemServico) (i
 	query := `INSERT INTO ordens_servico (descricao_servico, custo, data_servico, veiculo_placa)
 			  VALUES ($1, $2, $3, $4) RETURNING id`
 
-	err := r.connection.QueryRow(
+	err := r.connection.QueryRow(query,
 		ordem.DescricaoServico,
 		ordem.Custo,
 		ordem.DataServico,
@@ -90,7 +90,7 @@ func (r *OrdemServicoRepository) UpdateOrdemServico(ordem model.OrdemServico) (i
 			  SET descricao_servico = $1, custo = $2, data_servico = $3, veiculo_placa = $4
 			  WHERE id = $5`
 
-	result, err := r.connection.Exec(
+	result, err := r.connection.Exec(query,
 		ordem.DescricaoServico,
 		ordem.Custo,
 		ordem.DataServico,
