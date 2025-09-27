@@ -1,7 +1,9 @@
 package main
 
 import (
+	"database/sql"
 	"log"
+	"time"
 	"wheels-api/controller"
 	"wheels-api/db"
 	"wheels-api/repository"
@@ -13,12 +15,20 @@ import (
 func main() {
 	server := gin.Default()
 
-	dbConnection, err := db.ConnectDB()
-	if err != nil {
-		log.Fatalf("could not connect to db: %v", err)
+	var dbConnection *sql.DB
+	var err error
+	maxRetries := 10
+	retryInterval := 5 * time.Second
+
+	for i := 0; i < maxRetries; i++ {
+		dbConnection, err = db.ConnectDB()
+		if err == nil {
+			break // Connection successful
+		}
+		log.Printf("could not connect to db: %v. Retrying in %v... (%d/%d)", err, retryInterval, i+1, maxRetries)
+		time.Sleep(retryInterval)
 	}
 
-	// Injeção de dependência para Veículos
 	veiculoRepository := repository.NewVeiculoRepository(dbConnection)
 	veiculoUseCase := usecase.NewVeiculoUseCase(veiculoRepository)
 	veiculoController := controller.NewVeiculoController(veiculoUseCase)
