@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"wheels-api/model"
 )
 
@@ -87,9 +86,9 @@ func (pr *VeiculoRepository) CreateVeiculo(veiculo model.Veiculo) (int, error) {
 
 	stmt, err := pr.connection.Prepare(query)
 	if err != nil {
-		fmt.Println(err)
 		return 0, err
 	}
+	defer stmt.Close()
 
 	err = stmt.QueryRow(
 		veiculo.Placa,
@@ -101,11 +100,43 @@ func (pr *VeiculoRepository) CreateVeiculo(veiculo model.Veiculo) (int, error) {
 	).Scan(&id)
 
 	if err != nil {
-		fmt.Println(err)
 		return 0, err
 	}
 
-	stmt.Close()
-
 	return id, nil
+}
+
+func (pr *VeiculoRepository) UpdateVeiculo(veiculo model.Veiculo) error {
+	query := `UPDATE veiculos 
+			  SET placa = $1, marca = $2, modelo = $3, ano_fabricacao = $4, cor = $5, nome_proprietario = $6
+			  WHERE id = $7`
+
+	stmt, err := pr.connection.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(
+		veiculo.Placa,
+		veiculo.Marca,
+		veiculo.Modelo,
+		veiculo.AnoFabricacao,
+		veiculo.Cor,
+		veiculo.NomeProprietario,
+		veiculo.Id,
+	)
+
+	return err
+}
+
+func (pr *VeiculoRepository) DeleteVeiculo(id int) (int64, error) {
+	query := `DELETE FROM veiculos WHERE id = $1`
+
+	result, err := pr.connection.Exec(query, id)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }

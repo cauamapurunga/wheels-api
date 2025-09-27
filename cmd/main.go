@@ -31,6 +31,8 @@ func main() {
 	server.GET("/veiculos", veiculoController.GetVeiculos)
 	server.GET("/veiculo/:veiculoId", veiculoController.GetVeiculoById)
 	server.POST("/veiculo", veiculoController.CreateVeiculo)
+	server.PUT("/veiculo/:veiculoId", veiculoController.UpdateVeiculo)
+	server.DELETE("/veiculo/:veiculoId", veiculoController.DeleteVeiculo)
 
 	server.Run(":8000")
 }

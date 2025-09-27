@@ -37,3 +37,11 @@ func (v VeiculoUsecase) GetVeiculoById(id_veiculo int) (*model.Veiculo, error) {
 	}
 	return veiculo, nil
 }
+
+func (v *VeiculoUsecase) UpdateVeiculo(veiculo model.Veiculo) error {
+	return v.repository.UpdateVeiculo(veiculo)
+}
+
+func (v *VeiculoUsecase) DeleteVeiculo(id int) (int64, error) {
+	return v.repository.DeleteVeiculo(id)
+}
