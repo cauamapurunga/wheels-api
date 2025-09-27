@@ -38,7 +38,7 @@ func (v VeiculoUsecase) GetVeiculoById(id_veiculo int) (*model.Veiculo, error) {
 	return veiculo, nil
 }
 
-func (v *VeiculoUsecase) UpdateVeiculo(veiculo model.Veiculo) error {
+func (v *VeiculoUsecase) UpdateVeiculo(veiculo model.Veiculo) (int64, error) {
 	return v.repository.UpdateVeiculo(veiculo)
 }
 

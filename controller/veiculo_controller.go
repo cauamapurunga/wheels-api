@@ -119,13 +119,27 @@ func (v *veiculoController) UpdateVeiculo(ctx *gin.Context) {
 
 	veiculo.Id = veiculoId
 
-	if err := v.veiculoUsecase.UpdateVeiculo(veiculo); err != nil {
+	rowsAffected, err := v.veiculoUsecase.UpdateVeiculo(veiculo)
+	if err != nil {
 		log.Printf("Erro ao atualizar veículo ID %d: %v", veiculoId, err)
 		ctx.JSON(http.StatusInternalServerError, model.Response{Message: "Erro interno no servidor."})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, model.Response{Message: "Veículo atualizado com sucesso."})
+	if rowsAffected == 0 {
+		ctx.JSON(http.StatusNotFound, model.Response{Message: "Veículo não encontrado para atualização."})
+		return
+	}
+
+	// Busca o veículo atualizado para retornar ao cliente
+	updatedVeiculo, err := v.veiculoUsecase.GetVeiculoById(veiculoId)
+	if err != nil {
+		log.Printf("Erro ao buscar veículo atualizado ID %d: %v", veiculoId, err)
+		ctx.JSON(http.StatusInternalServerError, model.Response{Message: "Erro ao buscar dados após atualização."})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, updatedVeiculo)
 }
 
 func (v *veiculoController) DeleteVeiculo(ctx *gin.Context) {

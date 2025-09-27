@@ -106,18 +106,18 @@ func (pr *VeiculoRepository) CreateVeiculo(veiculo model.Veiculo) (int, error) {
 	return id, nil
 }
 
-func (pr *VeiculoRepository) UpdateVeiculo(veiculo model.Veiculo) error {
+func (pr *VeiculoRepository) UpdateVeiculo(veiculo model.Veiculo) (int64, error) {
 	query := `UPDATE veiculos 
 			  SET placa = $1, marca = $2, modelo = $3, ano_fabricacao = $4, cor = $5, nome_proprietario = $6
 			  WHERE id = $7`
 
 	stmt, err := pr.connection.Prepare(query)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(
+	result, err := stmt.Exec(
 		veiculo.Placa,
 		veiculo.Marca,
 		veiculo.Modelo,
@@ -127,7 +127,11 @@ func (pr *VeiculoRepository) UpdateVeiculo(veiculo model.Veiculo) error {
 		veiculo.Id,
 	)
 
-	return err
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 func (pr *VeiculoRepository) DeleteVeiculo(id int) (int64, error) {
