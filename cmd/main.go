@@ -30,6 +30,10 @@ func main() {
 		time.Sleep(retryInterval)
 	}
 
+	if dbConnection == nil {
+		log.Fatalf("Falha ao conectar ao banco de dados após %d tentativas. A aplicação será encerrada.", maxRetries)
+	}
+
 	veiculoRepository := repository.NewVeiculoRepository(dbConnection)
 	veiculoUseCase := usecase.NewVeiculoUseCase(veiculoRepository)
 	veiculoController := controller.NewVeiculoController(veiculoUseCase)
