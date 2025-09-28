@@ -40,7 +40,7 @@ Para executar o projeto localmente, siga os passos abaixo.
 
 1.  **Clone o repositório:**
     ```bash
-    git clone https://github.com/cauamapurunga/wheels-api
+    git clone [https://github.com/cauamapurunga/wheels-api](https://github.com/cauamapurunga/wheels-api)
     cd wheels-api
     ```
 
@@ -64,46 +64,49 @@ docker-compose down
 
 ## Documentação da API
 
-A seguir, exemplos de como interagir com os endpoints disponíveis.
+As seções a seguir descrevem os endpoints disponíveis.
 
 ### **Recurso: Veículos**
 
-#### Listar todos os veículos
-```bash
-curl -X GET http://localhost:8000/veiculos
-```
+| Método   | Rota              | Descrição                                         |
+| :------- | :---------------- | :------------------------------------------------ |
+| `GET`    | `/veiculos`       | Retorna uma lista de todos os veículos cadastrados. |
+| `GET`    | `/veiculo/{id}`   | Retorna um veículo específico pelo seu ID.        |
+| `POST`   | `/veiculo`        | Cria um novo veículo.                             |
+| `PUT`    | `/veiculo/{id}`   | Atualiza os dados de um veículo existente.        |
+| `DELETE` | `/veiculo/{id}`   | Remove um veículo do sistema.                     |
 
-#### Criar um novo veículo
-```bash
-curl -X POST http://localhost:8000/veiculo \
--H "Content-Type: application/json" \
--d '{
+**Exemplo de corpo (`body`) para requisições `POST` e `PUT`:**
+```json
+{
     "placa": "NEW-1A23",
     "marca": "Tesla",
     "modelo": "Model Y",
     "ano_fabricacao": 2024,
     "cor": "Branco Perolado",
     "nome_proprietario": "Elon Musk"
-}'
+}
 ```
+
+---
 
 ### **Recurso: Ordens de Serviço**
 
-#### Listar ordens de serviço por placa
-```bash
-curl -X GET http://localhost:8000/servicos/NEW-1A23
-```
+| Método   | Rota               | Descrição                                                      |
+| :------- | :----------------- | :------------------------------------------------------------- |
+| `POST`   | `/servicos`        | Cria uma nova ordem de serviço.                                |
+| `GET`    | `/servicos/{placa}`| Retorna todas as ordens de serviço de um veículo específico.   |
+| `PUT`    | `/servicos/{id}`   | Atualiza uma ordem de serviço existente.                       |
+| `DELETE` | `/servicos/{id}`   | Remove uma ordem de serviço do sistema.                        |
 
-#### Criar uma nova ordem de serviço
-```bash
-curl -X POST http://localhost:8000/servicos \
--H "Content-Type: application/json" \
--d '{
+**Exemplo de corpo (`body`) para requisições `POST` e `PUT`:**
+```json
+{
     "descricao_servico": "Instalação do software Autopilot",
     "custo": 15000.00,
     "data_servico": "2024-10-20T00:00:00Z",
     "veiculo_placa": "NEW-1A23"
-}'
+}
 ```
 
 ---
