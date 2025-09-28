@@ -31,3 +31,5 @@ func ConnectDB() (*sql.DB, error) {
 
 	return db, nil
 }
+
+// Forçando a atualização para o Railway
