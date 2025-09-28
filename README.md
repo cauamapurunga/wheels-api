@@ -1,36 +1,46 @@
 # API Wheels
 
-Uma API RESTful desenvolvida em Go para o gerenciamento de uma oficina de veículos. O sistema permite o cadastro e controle de veículos e suas respectivas ordens de serviço, utilizando uma arquitetura em camadas e containerização com Docker.
+<p align="center">
+  <strong>Uma API RESTful completa para a gestão de serviços em oficinas de veículos.</strong>
+</p>
 
-## Funcionalidades
+<p align="center">
+  <img src="https://img.shields.io/badge/Go-1.22-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go 1.22">
+  <img src="https://img.shields.io/badge/Gin_Gonic-1.9-008ECF?style=for-the-badge&logo=gin&logoColor=white" alt="Gin Gonic">
+  <img src="https://img.shields.io/badge/PostgreSQL-16-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/Docker-26-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+</p>
 
-- **Gerenciamento de Veículos**: CRUD completo (Criar, Ler, Atualizar, Deletar) para veículos.
-- **Gerenciamento de Ordens de Serviço**: CRUD completo (Criar, Ler, Atualizar, Deletar) para ordens de serviço.
-- **Consultas Relacionais**: Recuperação de ordens de serviço associadas a um veículo específico por sua placa.
-- **Arquitetura Limpa**: Código organizado em camadas (Controller, Usecase, Repository) para separação de responsabilidades e manutenibilidade.
-- **Containerização**: Ambiente de desenvolvimento e banco de dados totalmente gerenciado pelo Docker e Docker Compose.
+## Sobre o Projeto
 
-## Tecnologias Utilizadas
+A **API Wheels** é uma solução de backend desenvolvida em Go para centralizar e otimizar o gerenciamento de uma oficina de veículos. O sistema permite o cadastro e controle de veículos e suas respectivas ordens de serviço através de uma API RESTful robusta, utilizando uma arquitetura limpa e containerização com Docker para garantir portabilidade e escalabilidade.
 
-- **Linguagem**: Go
-- **Framework Web**: Gin Gonic
-- **Banco de Dados**: PostgreSQL
-- **Driver de Banco de Dados**: pq
-- **Containerização**: Docker & Docker Compose
+---
 
-## Como Executar o Projeto
+## Funcionalidades Principais
+
+-   **Gestão de Veículos**: CRUD completo (Criar, Ler, Atualizar, Deletar) para os veículos da oficina.
+-   **Gestão de Ordens de Serviço**: CRUD completo para as ordens de serviço vinculadas aos veículos.
+-   **Consultas Relacionais**: Recupere facilmente todas as ordens de serviço associadas a um veículo específico através da sua placa.
+-   **Arquitetura Limpa**: Código organizado em camadas (`controller`, `usecase`, `repository`) para promover a separação de responsabilidades, testabilidade e fácil manutenção.
+-   **Ambiente Containerizado**: O ambiente de desenvolvimento e o banco de dados são totalmente gerenciados pelo Docker e Docker Compose, simplificando a configuração e o deploy.
+
+---
+
+## Guia de Instalação e Execução
+
+Para executar o projeto localmente, siga os passos abaixo.
 
 ### Pré-requisitos
 
-As seguintes ferramentas devem estar instaladas em seu sistema:
-- Docker
-- Docker Compose
+-   Docker
+-   Docker Compose
 
 ### Instalação e Execução
 
 1.  **Clone o repositório:**
     ```bash
-    git clone <url-do-repositorio>
+    git clone https://github.com/cauamapurunga/wheels-api
     cd wheels-api
     ```
 
@@ -39,63 +49,64 @@ As seguintes ferramentas devem estar instaladas em seu sistema:
     ```bash
     docker-compose up --build -d
     ```
-    - A flag `--build` força a reconstrução da imagem da aplicação, garantindo que as últimas alterações de código sejam aplicadas.
-    - A flag `-d` executa os containers em modo "detached" (segundo plano).
+    -   A flag `--build` força a reconstrução da imagem, garantindo que as últimas alterações de código sejam aplicadas.
+    -   A flag `-d` executa os containers em segundo plano.
 
 3.  **Disponibilidade da API:**
     A API estará em execução e acessível em `http://localhost:8000`.
 
-Para parar a aplicação, execute o seguinte comando:
+Para parar a aplicação e remover os containers, execute:
 ```bash
 docker-compose down
 ```
 
+---
+
 ## Documentação da API
 
-As seções a seguir descrevem os endpoints disponíveis na API.
+A seguir, exemplos de como interagir com os endpoints disponíveis.
 
-### Recurso: Veículos
+### **Recurso: Veículos**
 
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| `GET` | `/veiculos` | Retorna uma lista de todos os veículos cadastrados. |
-| `GET` | `/veiculo/{id}` | Retorna um veículo específico pelo seu ID. |
-| `POST` | `/veiculo` | Cria um novo veículo. |
-| `PUT` | `/veiculo/{id}` | Atualiza os dados de um veículo existente. |
-| `DELETE` | `/veiculo/{id}` | Remove um veículo do sistema. |
+#### Listar todos os veículos
+```bash
+curl -X GET http://localhost:8000/veiculos
+```
 
-**Exemplo de corpo para requisições `POST` e `PUT`:**
-```json
-{
+#### Criar um novo veículo
+```bash
+curl -X POST http://localhost:8000/veiculo \
+-H "Content-Type: application/json" \
+-d '{
     "placa": "NEW-1A23",
     "marca": "Tesla",
     "modelo": "Model Y",
     "ano_fabricacao": 2024,
     "cor": "Branco Perolado",
     "nome_proprietario": "Elon Musk"
-}
+}'
 ```
 
----
+### **Recurso: Ordens de Serviço**
 
-### Recurso: Ordens de Serviço
+#### Listar ordens de serviço por placa
+```bash
+curl -X GET http://localhost:8000/servicos/NEW-1A23
+```
 
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| `POST` | `/servicos` | Cria uma nova ordem de serviço. |
-| `GET` | `/servicos/{placa}` | Retorna todas as ordens de serviço de um veículo específico. |
-| `PUT` | `/servicos/{id}` | Atualiza uma ordem de serviço existente. |
-| `DELETE` | `/servicos/{id}` | Remove uma ordem de serviço do sistema. |
-
-**Exemplo de corpo para requisições `POST` e `PUT`:**
-```json
-{
+#### Criar uma nova ordem de serviço
+```bash
+curl -X POST http://localhost:8000/servicos \
+-H "Content-Type: application/json" \
+-d '{
     "descricao_servico": "Instalação do software Autopilot",
     "custo": 15000.00,
     "data_servico": "2024-10-20T00:00:00Z",
     "veiculo_placa": "NEW-1A23"
-}
+}'
 ```
+
+---
 
 ## Estrutura do Projeto
 
@@ -116,6 +127,6 @@ O projeto segue uma arquitetura em camadas para promover a organização e o des
 ├── Dockerfile            # Define o processo de build da imagem Docker da aplicação Go.
 ├── go.mod
 ├── go.sum
-├── init.sql              # Script de inicialização do banco de dados (criação de tabelas e dados iniciais).
+├── init.sql              # Script de inicialização do banco de dados (criação de tabelas).
 └── README.md             # Este arquivo.
 ```
