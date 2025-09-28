@@ -40,7 +40,7 @@ Para executar o projeto localmente, siga os passos abaixo.
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/cauamapurunga/wheels-api](https://github.com/cauamapurunga/wheels-api)
+    git clone https://github.com/cauamapurunga/wheels-api
     cd wheels-api
     ```
 
