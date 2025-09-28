@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"log"
+	"os"
 	"time"
 	"wheels-api/controller"
 	"wheels-api/db"
@@ -58,5 +59,9 @@ func main() {
 	server.PUT("/servicos/:servicoId", ordemServicoController.UpdateOrdemServico)
 	server.DELETE("/servicos/:servicoId", ordemServicoController.DeleteOrdemServico)
 
-	server.Run(":8000")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000" // Porta padrão para ambiente local
+	}
+	server.Run(":" + port)
 }

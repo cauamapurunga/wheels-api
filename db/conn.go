@@ -3,22 +3,19 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
 	_ "github.com/lib/pq"
 )
 
-const (
-	host     = "go_db"
-	port     = 5432
-	user     = "postgres"
-	password = "12345678"
-	dbname   = "postgres"
-)
-
 func ConnectDB() (*sql.DB, error) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+	psqlInfo := os.Getenv("DATABASE_URL")
+
+	if psqlInfo == "" {
+		psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+
+			"password=%s dbname=%s sslmode=disable",
+			"go_db", 5432, "postgres", "12345678", "postgres")
+	}
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
@@ -30,7 +27,7 @@ func ConnectDB() (*sql.DB, error) {
 		return nil, err
 	}
 
-	fmt.Println("Connected to " + dbname)
+	fmt.Println("Conectado ao banco de dados com sucesso!")
 
 	return db, nil
 }
