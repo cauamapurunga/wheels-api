@@ -74,6 +74,7 @@ As seções a seguir descrevem os endpoints disponíveis.
 | `GET`    | `/veiculos/{id}`   | Retorna um veículo específico pelo seu ID.        |
 | `POST`   | `/veiculos`        | Cria um novo veículo.                             |
 | `PUT`    | `/veiculos/{id}`   | Atualiza os dados de um veículo existente.        |
+| `PATCH`    | `/veiculos/{id}`   | Atualiza parcialmente os dados de um veículo existente.        |
 | `DELETE` | `/veiculos/{id}`   | Remove um veículo do sistema.                     |
 
 **Exemplo de corpo (`body`) para requisições `POST` e `PUT`:**
@@ -98,6 +99,7 @@ As seções a seguir descrevem os endpoints disponíveis.
 | `POST`   | `/servicos`        | Cria uma nova ordem de serviço.                                |
 | `GET`    | `/servicos/{placa}`| Retorna todas as ordens de serviço de um veículo específico.   |
 | `PUT`    | `/servicos/{id}`   | Atualiza uma ordem de serviço existente.                       |
+| `PATCH`    | `/servicos/{id}`   | Atualiza parcialmente uma ordem de serviço existente.                       |
 | `DELETE` | `/servicos/{id}`   | Remove uma ordem de serviço do sistema.                        |
 
 **Exemplo de corpo (`body`) para requisições `POST` e `PUT`:**
