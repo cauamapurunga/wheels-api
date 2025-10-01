@@ -94,6 +94,7 @@ As seções a seguir descrevem os endpoints disponíveis.
 
 | Método   | Rota               | Descrição                                                      |
 | :------- | :----------------- | :------------------------------------------------------------- |
+| `GET`    | `/servicos`        | Retorna uma lista de todos os serviços cadastrados.            |
 | `POST`   | `/servicos`        | Cria uma nova ordem de serviço.                                |
 | `GET`    | `/servicos/{placa}`| Retorna todas as ordens de serviço de um veículo específico.   |
 | `PUT`    | `/servicos/{id}`   | Atualiza uma ordem de serviço existente.                       |
