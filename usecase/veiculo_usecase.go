@@ -45,3 +45,7 @@ func (v *VeiculoUsecase) UpdateVeiculo(veiculo model.Veiculo) (int64, error) {
 func (v *VeiculoUsecase) DeleteVeiculo(id int) (int64, error) {
 	return v.repository.DeleteVeiculo(id)
 }
+
+func (v *VeiculoUsecase) PatchVeiculo(id int, fields map[string]interface{}) (int64, error) {
+	return v.repository.PatchVeiculo(id, fields)
+}

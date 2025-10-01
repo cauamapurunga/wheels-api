@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"strconv"
 	"wheels-api/model"
 )
 
@@ -130,5 +131,42 @@ func (r *OrdemServicoRepository) DeleteOrdemServico(id int) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+	return result.RowsAffected()
+}
+
+func (r *OrdemServicoRepository) PatchOrdemServico(id int, fields map[string]interface{}) (int64, error) {
+	if len(fields) == 0 {
+		return 0, nil
+	}
+
+	query := "UPDATE ordens_servico SET "
+	values := []interface{}{}
+	i := 1
+
+	for field, value := range fields {
+		if i > 1 {
+			query += ", "
+		}
+		switch field {
+		case "descricao_servico":
+			query += "descricao_servico = $" + strconv.Itoa(i)
+		case "custo":
+			query += "custo = $" + strconv.Itoa(i)
+		case "data_servico":
+			query += "data_servico = $" + strconv.Itoa(i)
+		case "veiculo_placa":
+			query += "veiculo_placa = $" + strconv.Itoa(i)
+		}
+		values = append(values, value)
+		i++
+	}
+	query += " WHERE id = $" + strconv.Itoa(i)
+	values = append(values, id)
+
+	result, err := r.connection.Exec(query, values...)
+	if err != nil {
+		return 0, err
+	}
+
 	return result.RowsAffected()
 }

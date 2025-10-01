@@ -55,6 +55,7 @@ func main() {
 	server.GET("/veiculos/:veiculoId", veiculoController.GetVeiculoById)
 	server.POST("/veiculos", veiculoController.CreateVeiculo)
 	server.PUT("/veiculos/:veiculoId", veiculoController.UpdateVeiculo)
+	server.PATCH("/veiculos/:veiculoId", veiculoController.PatchVeiculo)
 	server.DELETE("/veiculos/:veiculoId", veiculoController.DeleteVeiculo)
 
 	// Rotas de Ordens de Serviço
@@ -62,6 +63,7 @@ func main() {
 	server.POST("/servicos", ordemServicoController.CreateOrdemServico)
 	server.GET("/servicos/:veiculoPlaca", ordemServicoController.GetOrdensServicoByPlaca)
 	server.PUT("/servicos/:servicoId", ordemServicoController.UpdateOrdemServico)
+	server.PATCH("/servicos/:servicoId", ordemServicoController.PatchOrdemServico)
 	server.DELETE("/servicos/:servicoId", ordemServicoController.DeleteOrdemServico)
 
 	port := os.Getenv("PORT")

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"strconv"
 	"wheels-api/model"
 )
 
@@ -138,6 +139,47 @@ func (pr *VeiculoRepository) DeleteVeiculo(id int) (int64, error) {
 	query := `DELETE FROM veiculos WHERE id = $1`
 
 	result, err := pr.connection.Exec(query, id)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+func (pr *VeiculoRepository) PatchVeiculo(id int, fields map[string]interface{}) (int64, error) {
+	if len(fields) == 0 {
+		return 0, nil
+	}
+
+	query := "UPDATE veiculos SET "
+	values := []interface{}{}
+	i := 1
+
+	for field, value := range fields {
+		if i > 1 {
+			query += ", "
+		}
+		switch field {
+		case "placa":
+			query += "placa = $" + strconv.Itoa(i)
+		case "marca":
+			query += "marca = $" + strconv.Itoa(i)
+		case "modelo":
+			query += "modelo = $" + strconv.Itoa(i)
+		case "ano_fabricacao":
+			query += "ano_fabricacao = $" + strconv.Itoa(i)
+		case "cor":
+			query += "cor = $" + strconv.Itoa(i)
+		case "nome_proprietario":
+			query += "nome_proprietario = $" + strconv.Itoa(i)
+		}
+		values = append(values, value)
+		i++
+	}
+	query += " WHERE id = $" + strconv.Itoa(i)
+	values = append(values, id)
+
+	result, err := pr.connection.Exec(query, values...)
 	if err != nil {
 		return 0, err
 	}

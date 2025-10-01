@@ -178,3 +178,50 @@ func (v *veiculoController) DeleteVeiculo(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, model.Response{Message: "Veículo deletado com sucesso."})
 }
+
+func (v *veiculoController) PatchVeiculo(ctx *gin.Context) {
+	id := ctx.Param("veiculoId")
+	if id == "" {
+		response := model.Response{
+			Message: "Id do veículo não pode ser nulo.",
+		}
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	veiculoId, err := strconv.Atoi(id)
+	if err != nil {
+		response := model.Response{
+			Message: "Id do veículo precisa ser um número.",
+		}
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	var fields map[string]interface{}
+	if err := ctx.BindJSON(&fields); err != nil {
+		ctx.JSON(http.StatusBadRequest, model.Response{Message: "Corpo da requisição inválido."})
+		return
+	}
+
+	rowsAffected, err := v.veiculoUsecase.PatchVeiculo(veiculoId, fields)
+	if err != nil {
+		log.Printf("Erro ao atualizar parcialmente veículo ID %d: %v", veiculoId, err)
+		ctx.JSON(http.StatusInternalServerError, model.Response{Message: "Erro interno no servidor."})
+		return
+	}
+
+	if rowsAffected == 0 {
+		ctx.JSON(http.StatusNotFound, model.Response{Message: "Veículo não encontrado para atualização."})
+		return
+	}
+
+	updatedVeiculo, err := v.veiculoUsecase.GetVeiculoById(veiculoId)
+	if err != nil {
+		log.Printf("Erro ao buscar veículo atualizado ID %d: %v", veiculoId, err)
+		ctx.JSON(http.StatusInternalServerError, model.Response{Message: "Erro ao buscar dados após atualização."})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, updatedVeiculo)
+}

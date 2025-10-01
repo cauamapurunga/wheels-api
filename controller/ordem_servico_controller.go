@@ -138,3 +138,39 @@ func (c *ordemServicoController) GetOrdensServico(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, ordens)
 }
+
+func (c *ordemServicoController) PatchOrdemServico(ctx *gin.Context) {
+	idStr := ctx.Param("servicoId")
+	servicoId, err := strconv.Atoi(idStr)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, model.Response{Message: "ID do serviço inválido."})
+		return
+	}
+
+	var fields map[string]interface{}
+	if err := ctx.BindJSON(&fields); err != nil {
+		ctx.JSON(http.StatusBadRequest, model.Response{Message: "Corpo da requisição inválido."})
+		return
+	}
+
+	rowsAffected, err := c.usecase.PatchOrdemServico(servicoId, fields)
+	if err != nil {
+		log.Printf("Erro ao atualizar parcialmente ordem de serviço ID %d: %v", servicoId, err)
+		ctx.JSON(http.StatusInternalServerError, model.Response{Message: "Erro interno no servidor."})
+		return
+	}
+
+	if rowsAffected == 0 {
+		ctx.JSON(http.StatusNotFound, model.Response{Message: "Ordem de serviço não encontrada para atualização."})
+		return
+	}
+
+	updatedOrdem, err := c.usecase.GetOrdemServicoById(servicoId)
+	if err != nil {
+		log.Printf("Erro ao buscar ordem de serviço atualizada ID %d: %v", servicoId, err)
+		ctx.JSON(http.StatusInternalServerError, model.Response{Message: "Erro ao buscar dados após atualização."})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, updatedOrdem)
+}

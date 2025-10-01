@@ -45,3 +45,7 @@ func (u *OrdemServicoUsecase) UpdateOrdemServico(ordem model.OrdemServico) (int6
 func (u *OrdemServicoUsecase) DeleteOrdemServico(id int) (int64, error) {
 	return u.repository.DeleteOrdemServico(id)
 }
+
+func (u *OrdemServicoUsecase) PatchOrdemServico(id int, fields map[string]interface{}) (int64, error) {
+	return u.repository.PatchOrdemServico(id, fields)
+}
