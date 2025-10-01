@@ -71,10 +71,10 @@ As seções a seguir descrevem os endpoints disponíveis.
 | Método   | Rota              | Descrição                                         |
 | :------- | :---------------- | :------------------------------------------------ |
 | `GET`    | `/veiculos`       | Retorna uma lista de todos os veículos cadastrados. |
-| `GET`    | `/veiculo/{id}`   | Retorna um veículo específico pelo seu ID.        |
-| `POST`   | `/veiculo`        | Cria um novo veículo.                             |
-| `PUT`    | `/veiculo/{id}`   | Atualiza os dados de um veículo existente.        |
-| `DELETE` | `/veiculo/{id}`   | Remove um veículo do sistema.                     |
+| `GET`    | `/veiculos/{id}`   | Retorna um veículo específico pelo seu ID.        |
+| `POST`   | `/veiculos`        | Cria um novo veículo.                             |
+| `PUT`    | `/veiculos/{id}`   | Atualiza os dados de um veículo existente.        |
+| `DELETE` | `/veiculos/{id}`   | Remove um veículo do sistema.                     |
 
 **Exemplo de corpo (`body`) para requisições `POST` e `PUT`:**
 ```json
