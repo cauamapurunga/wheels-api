@@ -52,10 +52,10 @@ func main() {
 
 	// Rotas de Veículos
 	server.GET("/veiculos", veiculoController.GetVeiculos)
-	server.GET("/veiculo/:veiculoId", veiculoController.GetVeiculoById)
-	server.POST("/veiculo", veiculoController.CreateVeiculo)
-	server.PUT("/veiculo/:veiculoId", veiculoController.UpdateVeiculo)
-	server.DELETE("/veiculo/:veiculoId", veiculoController.DeleteVeiculo)
+	server.GET("/veiculos/:veiculoId", veiculoController.GetVeiculoById)
+	server.POST("/veiculos", veiculoController.CreateVeiculo)
+	server.PUT("/veiculos/:veiculoId", veiculoController.UpdateVeiculo)
+	server.DELETE("/veiculos/:veiculoId", veiculoController.DeleteVeiculo)
 
 	// Rotas de Ordens de Serviço
 	server.GET("/servicos", ordemServicoController.GetOrdensServico)
