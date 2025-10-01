@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
 	"wheels-api/model"
 	"wheels-api/usecase"
 
@@ -11,12 +12,12 @@ import (
 )
 
 type ordemServicoController struct {
-	usecase usecase.OrdemServicoUsecase
+	usecase *usecase.OrdemServicoUsecase
 }
 
-func NewOrdemServicoController(usecase usecase.OrdemServicoUsecase) ordemServicoController {
-	return ordemServicoController{
-		usecase: usecase,
+func NewOrdemServicoController(u *usecase.OrdemServicoUsecase) *ordemServicoController {
+	return &ordemServicoController{
+		usecase: u,
 	}
 }
 
@@ -27,9 +28,6 @@ func (c *ordemServicoController) CreateOrdemServico(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, model.Response{Message: "Corpo da requisição inválido."})
 		return
 	}
-
-	// Idealmente, você validaria se a placa do veículo existe antes de criar.
-	// Por simplicidade, vamos pular essa etapa por enquanto.
 
 	createdOrdem, err := c.usecase.CreateOrdemServico(ordem)
 	if err != nil {
@@ -56,7 +54,6 @@ func (c *ordemServicoController) GetOrdensServicoByPlaca(ctx *gin.Context) {
 	}
 
 	if len(ordens) == 0 {
-		// Retorna uma lista vazia com status 200, o que é uma prática comum em REST.
 		ctx.JSON(http.StatusOK, []model.OrdemServico{})
 		return
 	}
@@ -123,4 +120,21 @@ func (c *ordemServicoController) DeleteOrdemServico(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, model.Response{Message: "Ordem de serviço deletada com sucesso."})
+}
+
+func (c *ordemServicoController) GetOrdensServico(ctx *gin.Context) {
+	
+	ordens, err := c.usecase.ListAllOrdensServico(ctx.Request.Context())
+	if err != nil {
+		log.Printf("Erro ao listar ordens de serviço: %v", err)
+		ctx.JSON(http.StatusInternalServerError, model.Response{Message: "Erro interno no servidor."})
+		return
+	}
+
+	if len(ordens) == 0 {
+		ctx.JSON(http.StatusOK, []model.OrdemServico{})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ordens)
 }

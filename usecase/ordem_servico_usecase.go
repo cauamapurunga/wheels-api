@@ -1,18 +1,24 @@
 package usecase
 
 import (
+	"context"
 	"wheels-api/model"
 	"wheels-api/repository"
 )
 
 type OrdemServicoUsecase struct {
-	repository repository.OrdemServicoRepository
+    repository *repository.OrdemServicoRepository
 }
 
-func NewOrdemServicoUseCase(repo repository.OrdemServicoRepository) OrdemServicoUsecase {
-	return OrdemServicoUsecase{
-		repository: repo,
-	}
+func NewOrdemServicoUseCase(repo *repository.OrdemServicoRepository) *OrdemServicoUsecase {
+    return &OrdemServicoUsecase{
+        repository: repo,
+    }
+}
+
+
+func (u *OrdemServicoUsecase) ListAllOrdensServico(ctx context.Context) ([]model.OrdemServico, error) {
+	return u.repository.ListAll(ctx)
 }
 
 func (u *OrdemServicoUsecase) CreateOrdemServico(ordem model.OrdemServico) (model.OrdemServico, error) {

@@ -58,6 +58,7 @@ func main() {
 	server.DELETE("/veiculo/:veiculoId", veiculoController.DeleteVeiculo)
 
 	// Rotas de Ordens de Serviço
+	server.GET("/servicos", ordemServicoController.GetOrdensServico)
 	server.POST("/servicos", ordemServicoController.CreateOrdemServico)
 	server.GET("/servicos/:veiculoPlaca", ordemServicoController.GetOrdensServicoByPlaca)
 	server.PUT("/servicos/:servicoId", ordemServicoController.UpdateOrdemServico)

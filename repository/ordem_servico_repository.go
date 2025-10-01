@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"wheels-api/model"
 )
@@ -9,10 +10,33 @@ type OrdemServicoRepository struct {
 	connection *sql.DB
 }
 
-func NewOrdemServicoRepository(connection *sql.DB) OrdemServicoRepository {
-	return OrdemServicoRepository{
-		connection: connection,
+// ✅ receiver corrigido, uso de context e do campo 'connection'
+func (r *OrdemServicoRepository) ListAll(ctx context.Context) ([]model.OrdemServico, error) {
+	rows, err := r.connection.QueryContext(ctx, `
+		SELECT id, descricao_servico, custo, data_servico, veiculo_placa
+		FROM ordens_servico
+		ORDER BY id DESC`)
+	if err != nil {
+		return nil, err
 	}
+	defer rows.Close()
+
+	var itens []model.OrdemServico
+	for rows.Next() {
+		var s model.OrdemServico
+		if err := rows.Scan(&s.Id, &s.DescricaoServico, &s.Custo, &s.DataServico, &s.VeiculoPlaca); err != nil {
+			return nil, err
+		}
+		itens = append(itens, s)
+	}
+	return itens, rows.Err()
+}
+
+
+func NewOrdemServicoRepository(connection *sql.DB) *OrdemServicoRepository {
+    return &OrdemServicoRepository{
+        connection: connection,
+    }
 }
 
 func (r *OrdemServicoRepository) CreateOrdemServico(ordem model.OrdemServico) (int, error) {
@@ -26,16 +50,14 @@ func (r *OrdemServicoRepository) CreateOrdemServico(ordem model.OrdemServico) (i
 		ordem.DataServico,
 		ordem.VeiculoPlaca,
 	).Scan(&id)
-
 	if err != nil {
 		return 0, err
 	}
-
 	return id, nil
 }
 
 func (r *OrdemServicoRepository) GetOrdensServicoByPlaca(placa string) ([]model.OrdemServico, error) {
-	query := `SELECT id, descricao_servico, custo, data_servico, veiculo_placa 
+	query := `SELECT id, descricao_servico, custo, data_servico, veiculo_placa
 			  FROM ordens_servico WHERE veiculo_placa = $1`
 
 	rows, err := r.connection.Query(query, placa)
@@ -63,7 +85,7 @@ func (r *OrdemServicoRepository) GetOrdensServicoByPlaca(placa string) ([]model.
 }
 
 func (r *OrdemServicoRepository) GetOrdemServicoById(id int) (*model.OrdemServico, error) {
-	query := `SELECT id, descricao_servico, custo, data_servico, veiculo_placa 
+	query := `SELECT id, descricao_servico, custo, data_servico, veiculo_placa
 			  FROM ordens_servico WHERE id = $1`
 
 	var ordem model.OrdemServico
@@ -74,19 +96,17 @@ func (r *OrdemServicoRepository) GetOrdemServicoById(id int) (*model.OrdemServic
 		&ordem.DataServico,
 		&ordem.VeiculoPlaca,
 	)
-
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil // Nenhum erro, apenas não encontrou
+			return nil, nil
 		}
 		return nil, err
 	}
-
 	return &ordem, nil
 }
 
 func (r *OrdemServicoRepository) UpdateOrdemServico(ordem model.OrdemServico) (int64, error) {
-	query := `UPDATE ordens_servico 
+	query := `UPDATE ordens_servico
 			  SET descricao_servico = $1, custo = $2, data_servico = $3, veiculo_placa = $4
 			  WHERE id = $5`
 
@@ -97,11 +117,9 @@ func (r *OrdemServicoRepository) UpdateOrdemServico(ordem model.OrdemServico) (i
 		ordem.VeiculoPlaca,
 		ordem.Id,
 	)
-
 	if err != nil {
 		return 0, err
 	}
-
 	return result.RowsAffected()
 }
 
@@ -112,6 +130,5 @@ func (r *OrdemServicoRepository) DeleteOrdemServico(id int) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-
 	return result.RowsAffected()
 }
