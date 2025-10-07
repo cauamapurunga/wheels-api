@@ -7,6 +7,7 @@ import (
 	"time"
 	"wheels-api/controller"
 	"wheels-api/db"
+	"wheels-api/middleware"
 	"wheels-api/repository"
 	"wheels-api/usecase"
 
@@ -38,7 +39,6 @@ func main() {
 	veiculoUseCase := usecase.NewVeiculoUseCase(veiculoRepository)
 	veiculoController := controller.NewVeiculoController(veiculoUseCase)
 
-	// Injeção de dependência para Ordens de Serviço
 	ordemServicoRepository := repository.NewOrdemServicoRepository(dbConnection)
 	ordemServicoUseCase := usecase.NewOrdemServicoUseCase(ordemServicoRepository)
 	ordemServicoController := controller.NewOrdemServicoController(ordemServicoUseCase)
@@ -50,21 +50,24 @@ func main() {
 		})
 	})
 
+	protected := server.Group("/")
+	protected.Use(middleware.AuthMiddleware())
+
 	// Rotas de Veículos
-	server.GET("/veiculos", veiculoController.GetVeiculos)
-	server.GET("/veiculos/:veiculoId", veiculoController.GetVeiculoById)
-	server.POST("/veiculos", veiculoController.CreateVeiculo)
-	server.PUT("/veiculos/:veiculoId", veiculoController.UpdateVeiculo)
-	server.PATCH("/veiculos/:veiculoId", veiculoController.PatchVeiculo)
-	server.DELETE("/veiculos/:veiculoId", veiculoController.DeleteVeiculo)
+	protected.GET("/veiculos", veiculoController.GetVeiculos)
+	protected.GET("/veiculos/:veiculoId", veiculoController.GetVeiculoById)
+	protected.POST("/veiculos", veiculoController.CreateVeiculo)
+	protected.PUT("/veiculos/:veiculoId", veiculoController.UpdateVeiculo)
+	protected.PATCH("/veiculos/:veiculoId", veiculoController.PatchVeiculo)
+	protected.DELETE("/veiculos/:veiculoId", veiculoController.DeleteVeiculo)
 
 	// Rotas de Ordens de Serviço
-	server.GET("/servicos", ordemServicoController.GetOrdensServico)
-	server.POST("/servicos", ordemServicoController.CreateOrdemServico)
-	server.GET("/servicos/:veiculoPlaca", ordemServicoController.GetOrdensServicoByPlaca)
-	server.PUT("/servicos/:servicoId", ordemServicoController.UpdateOrdemServico)
-	server.PATCH("/servicos/:servicoId", ordemServicoController.PatchOrdemServico)
-	server.DELETE("/servicos/:servicoId", ordemServicoController.DeleteOrdemServico)
+	protected.GET("/servicos", ordemServicoController.GetOrdensServico)
+	protected.POST("/servicos", ordemServicoController.CreateOrdemServico)
+	protected.GET("/servicos/:veiculoPlaca", ordemServicoController.GetOrdensServicoByPlaca)
+	protected.PUT("/servicos/:servicoId", ordemServicoController.UpdateOrdemServico)
+	protected.PATCH("/servicos/:servicoId", ordemServicoController.PatchOrdemServico)
+	protected.DELETE("/servicos/:servicoId", ordemServicoController.DeleteOrdemServico)
 
 	port := os.Getenv("PORT")
 	if port == "" {
