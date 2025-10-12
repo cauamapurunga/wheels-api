@@ -152,11 +152,11 @@ func (c *ordemServicoController) GetOrdensServico(ctx *gin.Context) {
 	}
 
 	if len(ordens) == 0 {
-		ctx.JSON(http.StatusOK, []model.OrdemServico{})
+		ctx.JSON(http.StatusOK, gin.H{"servicos": []model.OrdemServico{}})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, ordens)
+	ctx.JSON(http.StatusOK, gin.H{"servicos": ordens})
 }
 
 func (c *ordemServicoController) PatchOrdemServico(ctx *gin.Context) {

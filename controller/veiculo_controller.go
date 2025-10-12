@@ -28,7 +28,14 @@ func (v *veiculoController) GetVeiculos(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, veiculos)
+	// Embora o Gin já retorne '[]' para uma slice vazia,
+	// deixar explícito melhora a legibilidade e a consistência com outros controllers.
+	if len(veiculos) == 0 {
+		ctx.JSON(http.StatusOK, gin.H{"veiculos": []model.Veiculo{}})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"veiculos": veiculos})
 }
 
 func (v *veiculoController) GetVeiculoById(ctx *gin.Context) {
