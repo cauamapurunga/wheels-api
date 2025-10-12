@@ -66,6 +66,34 @@ docker-compose down
 
 As seções a seguir descrevem os endpoints disponíveis.
 
+### **Autenticação**
+
+| Método   | Rota         | Descrição                                                                 |
+| :------- | :----------- | :------------------------------------------------------------------------ |
+| `POST`   | `/register`  | Registra um novo usuário no sistema.                                      |
+| `POST`   | `/login`     | Autentica um usuário e retorna um token JWT para acesso às rotas protegidas. |
+
+**Exemplo de corpo (`body`) para `/register`:**
+```json
+{
+    "name": "Nome do Usuário",
+    "email": "usuario@email.com",
+    "password": "sua_senha_forte"
+}
+```
+
+**Exemplo de corpo (`body`) para `/login`:**
+```json
+{
+    "email": "usuario@email.com",
+    "password": "sua_senha_forte"
+}
+```
+
+**Utilizando o Token**
+
+Após o login, a API retornará um token JWT. Para acessar as rotas protegidas (como `/veiculos` e `/servicos`), você deve incluir este token no cabeçalho `Authorization` de suas requisições, no formato `Bearer <seu_token_jwt>`.
+
 ### **Recurso: Veículos**
 
 | Método   | Rota              | Descrição                                         |
