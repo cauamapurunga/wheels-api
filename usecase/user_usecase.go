@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"strings"
 	"time"
 	"wheels-api/config"
 	"wheels-api/model"
@@ -25,6 +26,7 @@ type UserUseCase struct {
 }
 
 func (uc *UserUseCase) Register(user model.User) (int64, error) {
+	user.Email = strings.ToLower(user.Email)
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return 0, err
@@ -34,6 +36,7 @@ func (uc *UserUseCase) Register(user model.User) (int64, error) {
 }
 
 func (uc *UserUseCase) Login(email, password string) (string, error) {
+	email = strings.ToLower(email)
 	user, err := uc.repo.GetUserByEmail(email)
 	if err != nil {
 		return "", err
