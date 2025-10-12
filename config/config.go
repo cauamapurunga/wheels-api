@@ -1,11 +1,14 @@
 package config
 
-import "os"
+import (
+	"log"
+	"os"
+)
 
 func GetJWTSecret() []byte {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
-		return []byte("your_secret_key")
+		log.Fatal("FATAL: JWT_SECRET environment variable not set.")
 	}
 	return []byte(secret)
 }
