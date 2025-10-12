@@ -1,5 +1,11 @@
+-- Remove as tabelas na ordem correta de dependência.
+DROP TABLE IF EXISTS ordens_servico;
+
 -- Remove a tabela se ela já existir, para garantir um começo limpo.
 DROP TABLE IF EXISTS veiculos;
+
+-- Remove a tabela de usuários se ela já existir.
+DROP TABLE IF EXISTS users;
 
 -- Cria a tabela com a estrutura correta.
 CREATE TABLE veiculos (
@@ -10,6 +16,14 @@ CREATE TABLE veiculos (
     ano_fabricacao INT NOT NULL,
     cor VARCHAR(30) NOT NULL,
     nome_proprietario VARCHAR(255) NOT NULL
+);
+
+-- Cria a tabela de usuários.
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
 );
 
 -- Insere os 11 registros da sua imagem.
@@ -27,9 +41,6 @@ INSERT INTO veiculos (placa, marca, modelo, ano_fabricacao, cor, nome_proprietar
 ('BCD-7I88', 'Nissan', 'Kicks', 2024, 'Preto', 'Laura Fernandes Rocha'),
 ('RIO-2A18', 'Chevrolet', 'Onix', 2024, 'Preto', 'Irineu Martins');
 
--- Remove a tabela de ordens de serviço se ela já existir.
-DROP TABLE IF EXISTS ordens_servico;
-
 -- Cria a tabela para Ordens de Serviço.
 CREATE TABLE ordens_servico (
     id SERIAL PRIMARY KEY,
@@ -40,6 +51,7 @@ CREATE TABLE ordens_servico (
     CONSTRAINT fk_veiculo
         FOREIGN KEY(veiculo_placa) 
         REFERENCES veiculos(placa)
+        ON DELETE CASCADE
 );
 
 -- Insere algumas ordens de serviço de exemplo.

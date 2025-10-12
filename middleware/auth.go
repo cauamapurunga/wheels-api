@@ -2,26 +2,16 @@ package middleware
 
 import (
 	"net/http"
-	"os"
 	"strings"
+	"wheels-api/config"
 	"wheels-api/model"
+	"wheels-api/usecase"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
-	// Busca o token da variável de ambiente uma vez na inicialização
-	authToken := os.Getenv("AUTH_TOKEN")
-
-	// Checagem se a variável de ambiente existe
-	if authToken == "" {
-		// Retorna um handler que sempre falha se a configuração estiver faltando
-		return func(c *gin.Context) {
-			c.JSON(http.StatusInternalServerError, model.Response{Message: "Configuração de autenticação faltando no servidor (AUTH_TOKEN)."})
-			c.Abort()
-		}
-	}
-
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -37,13 +27,31 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		token := parts[1]
+		tokenString := parts[1]
+		claims := &usecase.Claims{}
 
-		if token != authToken {
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			return config.GetJWTSecret(), nil
+		})
+
+		if err != nil {
+			if err == jwt.ErrSignatureInvalid || err == jwt.ErrTokenExpired {
+				c.JSON(http.StatusUnauthorized, model.Response{Message: "Token inválido ou expirado."})
+			} else {
+				c.JSON(http.StatusBadRequest, model.Response{Message: "Token malformado."})
+			}
+			c.Abort()
+			return
+		}
+
+		if !token.Valid {
 			c.JSON(http.StatusUnauthorized, model.Response{Message: "Token inválido."})
 			c.Abort()
 			return
 		}
+
+		// Adiciona as claims ao contexto para uso posterior nos handlers
+		c.Set("user_claims", claims)
 
 		c.Next()
 	}

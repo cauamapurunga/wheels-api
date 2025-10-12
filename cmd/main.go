@@ -17,6 +17,9 @@ import (
 func main() {
 	server := gin.Default()
 
+	// Define que não confiamos em nenhum proxy
+	server.SetTrustedProxies(nil)
+
 	var dbConnection *sql.DB
 	var err error
 	maxRetries := 10
@@ -35,6 +38,11 @@ func main() {
 		log.Fatalf("Falha ao conectar ao banco de dados após %d tentativas. A aplicação será encerrada.", maxRetries)
 	}
 
+	// User
+	userRepository := repository.NewUserRepository(dbConnection)
+	userUseCase := usecase.NewUserUseCase(userRepository)
+	userController := controller.NewUserController(userUseCase)
+
 	veiculoRepository := repository.NewVeiculoRepository(dbConnection)
 	veiculoUseCase := usecase.NewVeiculoUseCase(veiculoRepository)
 	veiculoController := controller.NewVeiculoController(veiculoUseCase)
@@ -43,10 +51,12 @@ func main() {
 	ordemServicoUseCase := usecase.NewOrdemServicoUseCase(ordemServicoRepository)
 	ordemServicoController := controller.NewOrdemServicoController(ordemServicoUseCase)
 
+	server.POST("/register", userController.Register)
+	server.POST("/login", userController.Login)
+
 	server.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
-			"message:": "pong",
-			"message":  "pong",
+			"message": "pong",
 		})
 	})
 
