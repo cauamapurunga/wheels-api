@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"wheels-api/config"
@@ -31,21 +33,15 @@ func AuthMiddleware() gin.HandlerFunc {
 		claims := &usecase.Claims{}
 
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
 			return config.GetJWTSecret(), nil
 		})
 
-		if err != nil {
-			if err == jwt.ErrSignatureInvalid || err == jwt.ErrTokenExpired {
-				c.JSON(http.StatusUnauthorized, model.Response{Message: "Token inválido ou expirado."})
-			} else {
-				c.JSON(http.StatusBadRequest, model.Response{Message: "Token malformado."})
-			}
-			c.Abort()
-			return
-		}
-
-		if !token.Valid {
-			c.JSON(http.StatusUnauthorized, model.Response{Message: "Token inválido."})
+		if err != nil || !token.Valid {
+			log.Printf("Error parsing token: %v", err)
+			c.JSON(http.StatusUnauthorized, model.Response{Message: "Token inválido ou expirado."})
 			c.Abort()
 			return
 		}
