@@ -39,26 +39,34 @@ func (c *ordemServicoController) CreateOrdemServico(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, createdOrdem)
 }
 
-func (c *ordemServicoController) GetOrdensServicoByPlaca(ctx *gin.Context) {
-	placa := ctx.Param("veiculoPlaca")
-	if placa == "" {
-		ctx.JSON(http.StatusBadRequest, model.Response{Message: "A placa do veículo é obrigatória."})
+func (c *ordemServicoController) GetOrdemServicoById(ctx *gin.Context) {
+	idStr := ctx.Param("servicoId")
+	servicoId, err := strconv.Atoi(idStr)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, model.Response{Message: "ID do serviço inválido."})
 		return
 	}
 
-	ordens, err := c.usecase.GetOrdensServicoByPlaca(placa)
+	ordem, err := c.usecase.GetOrdemServicoById(servicoId)
 	if err != nil {
-		log.Printf("Erro ao buscar ordens de serviço para a placa %s: %v", placa, err)
+		// Verifica se o erro é "não encontrado" para dar uma resposta mais específica.
+		// Assumindo que o usecase retorna sql.ErrNoRows para "não encontrado".
+		if err.Error() == "sql: no rows in result set" {
+			ctx.JSON(http.StatusNotFound, model.Response{Message: "Ordem de serviço não encontrada."})
+			return
+		}
+		log.Printf("Erro ao buscar ordem de serviço por ID %d: %v", servicoId, err)
 		ctx.JSON(http.StatusInternalServerError, model.Response{Message: "Erro interno no servidor."})
 		return
 	}
 
-	if len(ordens) == 0 {
-		ctx.JSON(http.StatusOK, []model.OrdemServico{})
+	// O usecase pode retornar nil se não encontrar, mesmo sem erro explícito.
+	if ordem == nil {
+		ctx.JSON(http.StatusNotFound, model.Response{Message: "Ordem de serviço não encontrada."})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, ordens)
+	ctx.JSON(http.StatusOK, ordem)
 }
 
 func (c *ordemServicoController) UpdateOrdemServico(ctx *gin.Context) {
@@ -123,10 +131,22 @@ func (c *ordemServicoController) DeleteOrdemServico(ctx *gin.Context) {
 }
 
 func (c *ordemServicoController) GetOrdensServico(ctx *gin.Context) {
-	
-	ordens, err := c.usecase.ListAllOrdensServico(ctx.Request.Context())
+	// Verifica se o query parameter "placa" foi passado na URL
+	placa := ctx.Query("placa")
+
+	var ordens []model.OrdemServico
+	var err error
+
+	if placa != "" {
+		// Se a placa foi fornecida, filtra por ela
+		ordens, err = c.usecase.GetOrdensServicoByPlaca(placa)
+	} else {
+		// Caso contrário, lista todas as ordens de serviço
+		ordens, err = c.usecase.ListAllOrdensServico(ctx.Request.Context())
+	}
+
 	if err != nil {
-		log.Printf("Erro ao listar ordens de serviço: %v", err)
+		log.Printf("Erro ao buscar ordens de serviço (placa: '%s'): %v", placa, err)
 		ctx.JSON(http.StatusInternalServerError, model.Response{Message: "Erro interno no servidor."})
 		return
 	}

@@ -74,7 +74,7 @@ func main() {
 	// Rotas de Ordens de Serviço
 	protected.GET("/servicos", ordemServicoController.GetOrdensServico)
 	protected.POST("/servicos", ordemServicoController.CreateOrdemServico)
-	protected.GET("/servicos/:veiculoPlaca", ordemServicoController.GetOrdensServicoByPlaca)
+	protected.GET("/servicos/:servicoId", ordemServicoController.GetOrdemServicoById)
 	protected.PUT("/servicos/:servicoId", ordemServicoController.UpdateOrdemServico)
 	protected.PATCH("/servicos/:servicoId", ordemServicoController.PatchOrdemServico)
 	protected.DELETE("/servicos/:servicoId", ordemServicoController.DeleteOrdemServico)

@@ -19,17 +19,17 @@ type UserController struct {
 func (uc *UserController) Register(c *gin.Context) {
 	var user model.User
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, model.Response{Message: "Corpo da requisição inválido: " + err.Error()})
 		return
 	}
 
-	id, err := uc.useCase.Register(user)
+	createdUser, err := uc.useCase.Register(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, model.Response{Message: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"id": id})
+	c.JSON(http.StatusCreated, createdUser)
 }
 
 func (uc *UserController) Login(c *gin.Context) {
@@ -39,13 +39,13 @@ func (uc *UserController) Login(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&credentials); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, model.Response{Message: "Corpo da requisição inválido: " + err.Error()})
 		return
 	}
 
 	token, err := uc.useCase.Login(credentials.Email, credentials.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		c.JSON(http.StatusUnauthorized, model.Response{Message: "Credenciais inválidas."})
 		return
 	}
 

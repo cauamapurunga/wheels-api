@@ -92,15 +92,15 @@ As seções a seguir descrevem os endpoints disponíveis.
 ---
 
 ### **Recurso: Ordens de Serviço**
-
-| Método   | Rota               | Descrição                                                      |
-| :------- | :----------------- | :------------------------------------------------------------- |
-| `GET`    | `/servicos`        | Retorna uma lista de todos os serviços cadastrados.            |
-| `POST`   | `/servicos`        | Cria uma nova ordem de serviço.                                |
-| `GET`    | `/servicos/{placa}`| Retorna todas as ordens de serviço de um veículo específico.   |
-| `PUT`    | `/servicos/{id}`   | Atualiza uma ordem de serviço existente.                       |
-| `PATCH`    | `/servicos/{id}`   | Atualiza parcialmente uma ordem de serviço existente.                       |
-| `DELETE` | `/servicos/{id}`   | Remove uma ordem de serviço do sistema.                        |
+ 
+| Método   | Rota               | Descrição                                                                                             |
+| :------- | :----------------- | :---------------------------------------------------------------------------------------------------- |
+| `GET`    | `/servicos`        | Lista todos os serviços. Se o parâmetro `?placa=...` for fornecido, a lista é filtrada por essa placa. |
+| `GET`    | `/servicos/{id}`   | Retorna uma ordem de serviço específica pelo seu ID.                                                  |
+| `POST`   | `/servicos`        | Cria uma nova ordem de serviço.                                                                       |
+| `PUT`    | `/servicos/{id}`   | Atualiza uma ordem de serviço existente.                                                              |
+| `PATCH`  | `/servicos/{id}`   | Atualiza parcialmente uma ordem de serviço existente.                                                 |
+| `DELETE` | `/servicos/{id}`   | Remove uma ordem de serviço do sistema.                                                               |
 
 **Exemplo de corpo (`body`) para requisições `POST` e `PUT`:**
 ```json
