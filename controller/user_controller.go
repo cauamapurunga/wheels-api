@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strings"
 	"wheels-api/model"
 	"wheels-api/usecase"
 
@@ -25,6 +26,10 @@ func (uc *UserController) Register(c *gin.Context) {
 
 	createdUser, err := uc.useCase.Register(user)
 	if err != nil {
+		if strings.Contains(err.Error(), "E-mail já cadastrado.") {
+			c.JSON(http.StatusConflict, model.Response{Message: err.Error()})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, model.Response{Message: err.Error()})
 		return
 	}
